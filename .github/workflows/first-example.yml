@@ -16,7 +16,7 @@ jobs:
               run: |
  
  
-                chmod+ asci-script.sh
+                chmod +x asci-script.sh
                 ./asci-script.sh   
  
 
