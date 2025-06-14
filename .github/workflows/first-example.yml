@@ -15,16 +15,30 @@ jobs:
     steps:
       - name: Create dragon message
         run: echo 'cowsay -f dragon "RAA! I am a dragon."' > dragon.sh
-      - run: chmod +x dragon.sh
+
+      - name: Make it executable
+        run: chmod +x dragon.sh
+
+      - name: Upload dragon.sh
+        uses: actions/upload-artifact@v4
+        with:
+          name: dragon-script
+          path: dragon.sh
 
   execute:
     runs-on: ubuntu-latest
     needs: generate
     steps:
+      - name: Download dragon.sh
+        uses: actions/download-artifact@v4
+        with:
+          name: dragon-script
+
+      - name: Install cowsay
+        run: sudo apt-get install -y cowsay
+
       - name: Run the dragon message
-        run: |
-          sudo apt-get install -y cowsay
-          ./dragon.sh
+        run: ./dragon.sh
 
   deploy:
     runs-on: ubuntu-latest
