@@ -1,22 +1,34 @@
-name: my first workflow
+name: cowsay-multi-job
 
 on: push
+
 jobs:
-    first_job:
-        runs-on: ubuntu-latest
-        steps:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install cowsay
+        run: sudo apt-get install -y cowsay
 
-            - name: Checkout Repo
-              uses: actions/checkout@v4
+  generate:
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - name: Create dragon message
+        run: echo 'cowsay -f dragon "RAA! I am a dragon."' > dragon.sh
+      - run: chmod +x dragon.sh
 
-            - name: List Repo files
-              run: ls -ltra
-           
-            - name: Excute shell script
-              run: |
- 
-                chmod +x asci-script.sh
-                ./asci-script.sh   
- 
+  execute:
+    runs-on: ubuntu-latest
+    needs: generate
+    steps:
+      - name: Run the dragon message
+        run: |
+          sudo apt-get install -y cowsay
+          ./dragon.sh
 
-          
+  deploy:
+    runs-on: ubuntu-latest
+    needs: execute
+    steps:
+      - name: Final Deployment Step
+        run: echo "🎉 Deployment done! All jobs completed successfully."
